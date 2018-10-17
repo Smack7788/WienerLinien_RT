@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,8 +25,10 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-public class RT_Process implements Job{
 
+public class RT_Process implements Job{
+	long startTime = System.currentTimeMillis();
+	
 	private static final int MAX_RBL = 9500;
 	private static final int MAGIC_LOOP_NUMBER = 500;
 	private String REQUEST_URL_All = "http://www.wienerlinien.at/ogd_realtime/monitor?%s&sender=Aq5inVKiQsJwRm9c";
@@ -36,17 +39,14 @@ public class RT_Process implements Job{
 	private static String ES_INDEX = "";
 	private static String indexTimestamp = null;
 	private static final String ES_INDEX_TYPE = "data";
+	int dayOfTheWeek = new Date().getDay();
 	//TODO Reorganize the constants
 	
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		
-		
-		// Indicate the test is in Process
-	    logger.info("Test in Process - " + new Date());
-	    
+			    
 	    //Define the Index name including date
 	    indexTimestamp = indexDateFormat.format(new Date());
-	    ES_INDEX = "RT_WienerLinien_"+indexTimestamp;
+	    ES_INDEX = "rt_wienerlinien_"+indexTimestamp;
 	    
 	    // Returns a String List of all monitor JSON Objects
 	    List<String> jsonMonitorList = runAll(0, MAX_RBL);
@@ -70,18 +70,22 @@ public class RT_Process implements Job{
 			output.close();
 			logger.info(counterSuccess + " have successfully been processed" +"\n"+ counterFailed + " have had an error");
 			
-//			String command = "curl -H \"Content-Type:application/x-ndjson\" -XPOST \"http://localhost:9200/_bulk?pretty\" --data-binary @C:/Users/admin/Desktop/WL/export/realTimeTempFile.json";
-//			ProcessBuilder builder = new ProcessBuilder(
-//		            "cmd.exe", "/c", command);
-//		        Process p = builder.start();
-//		        BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//				String inputLine;
-//				String test="";
-//				while ((inputLine = r.readLine()) != null) {
-//					test = inputLine;
-//					System.out.println(test);
-//				}
-//				r.close();
+			long estimatedTime = System.currentTimeMillis() - startTime;
+			System.out.println(estimatedTime);
+			
+			
+			String command = "curl -H \"Content-Type:application/x-ndjson\" -XPOST \"http://localhost:9200/_bulk?pretty\" --data-binary @C:/Users/admin/Desktop/WL/export/realTimeTempFile.json";
+			ProcessBuilder builder = new ProcessBuilder(
+		            "cmd.exe", "/c", command);
+		        Process p = builder.start();
+		        BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				String inputLine;
+				String test="";
+				while ((inputLine = r.readLine()) != null) {
+					test = inputLine;
+					System.out.println(test);
+				}
+				r.close();
 		} catch (IOException | java.text.ParseException e) {
 			logger.debug(e.getMessage());
 			
@@ -181,14 +185,6 @@ public class RT_Process implements Job{
 			logger.debug("Problem creating json object");
 		}
 		
-		String id = null;
-		try {
-			JSONObject _id =oldJsonObject.getJSONObject("_id");
-			id = (String) _id.get("$oid");
-		} catch (JSONException e1) {
-			logger.debug("Problem reading _id");
-		}
-
 		JSONObject linesObject = null;
 		String name = "";
 		String richtungsId = "";
@@ -278,9 +274,12 @@ public class RT_Process implements Job{
 			logger.debug("Cannot read stationNumber (properties.name) ");
 		}
 		JSONArray location = null;
+		String location2 = null;
 		try {
 			JSONObject geometry = locationStop.getJSONObject("geometry");
 			location = (JSONArray) geometry.get("coordinates");
+			location2 = "{\"lat\":"+ location.getDouble(1) + ",\"lon\":" + location.getDouble(0) + "}";
+			
 		} catch (JSONException e1) {
 			logger.debug("Cannot read coordinates");
 		}
@@ -297,12 +296,7 @@ public class RT_Process implements Job{
 		header.append(ES_INDEX);
 		header.append("\",\"_type\":\"");
 		header.append(ES_INDEX_TYPE);
-		if(id != null){
-			header.append("\",\"_id\":\"");
-			header.append(id);
-			header.append("\"}}");
-		}else
-		{header.append("\"}}");}
+		header.append("\"}}");
 		
 		StringBuilder dataString = new StringBuilder();
 		String POST_FIX = "\":\"";
@@ -379,13 +373,16 @@ public class RT_Process implements Job{
 			dataString.append(serverTime);
 			dataString.append(DELIMITER);
 		}
-		if(location != null){
+		if(location2 != null){
 			dataString.append(String.format(KEY_VALUE_PAIR2, "location"));
-			dataString.append(location);
+			dataString.append(location2);
 			dataString.append(",");
 		}
-		
-		String timeCheck = serverTime.substring(0, 13);
+		if(delay != null){
+			dataString.append(String.format(KEY_VALUE_PAIR2, "dayOfTheWeek"));
+			dataString.append(dayOfTheWeek);
+			dataString.append(",");
+		}
 		
 		boolean lastCharCheck = dataString.toString().endsWith(",");
 		if(lastCharCheck) {
@@ -406,7 +403,5 @@ public class RT_Process implements Job{
 			delay = (int) ((timeR.getTime()-timeP.getTime())/1000);
 		}
 		return delay;
-	}
-	
-	
+	}	
 }
