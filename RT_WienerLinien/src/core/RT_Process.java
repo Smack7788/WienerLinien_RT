@@ -39,7 +39,8 @@ public class RT_Process implements Job{
 	private static String ES_INDEX = "";
 	private static String indexTimestamp = null;
 	private static final String ES_INDEX_TYPE = "data";
-	int dayOfTheWeek = new Date().getDay();
+	Integer dayOfTheWeek = new Date().getDay();
+	Integer hourOfTheDay = new Date().getHours();
 	//TODO Reorganize the constants
 	
 	public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -378,9 +379,14 @@ public class RT_Process implements Job{
 			dataString.append(location2);
 			dataString.append(",");
 		}
-		if(delay != null){
+		if(dayOfTheWeek != null){
 			dataString.append(String.format(KEY_VALUE_PAIR2, "dayOfTheWeek"));
 			dataString.append(dayOfTheWeek);
+			dataString.append(",");
+		}
+		if(hourOfTheDay != null){
+			dataString.append(String.format(KEY_VALUE_PAIR2, "hourOfTheDay"));
+			dataString.append(hourOfTheDay);
 			dataString.append(",");
 		}
 		

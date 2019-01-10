@@ -13,6 +13,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
+import org.quartz.impl.StdScheduler;
 import org.quartz.impl.StdSchedulerFactory;
 
 public class Main {
@@ -28,23 +29,23 @@ public class Main {
 		
 		JobDetail realTimeJob = JobBuilder.newJob(RT_Process.class).build();
 		
-		Trigger realTimeTrigger = TriggerBuilder.newTrigger().withIdentity("CronTrigger").withSchedule(CronScheduleBuilder.cronSchedule("0 0/2 * ? * *")).build();
+		Trigger realTimeTrigger = TriggerBuilder.newTrigger().withIdentity("CronTrigger").withSchedule(CronScheduleBuilder.cronSchedule("0 0/1 * ? * *")).build();
 		
 //		Trigger realTimeTrigger = TriggerBuilder.newTrigger().withIdentity("CronTrigger").startNow().build();
 		
 		realTimeScheduler.start();
 		realTimeScheduler.scheduleJob(realTimeJob,realTimeTrigger);
-		
         
-//		Scheduler indexSetupScheduler = StdSchedulerFactory.getDefaultScheduler();
-//		
-//		JobDetail indexSetupJob = JobBuilder.newJob(IndexSetupProcess.class).build();
-//		
-//		Trigger indexSetupTrigger = TriggerBuilder.newTrigger().withIdentity("CronTrigger").withSchedule(CronScheduleBuilder.cronSchedule("0/10 * * ? * *")).build();
-//		
-//		
-//		indexSetupScheduler.start();
-//		indexSetupScheduler.scheduleJob(indexSetupJob,indexSetupTrigger);
+		Scheduler indexSetupScheduler = StdSchedulerFactory.getDefaultScheduler();
+		
+		JobDetail indexSetupJob = JobBuilder.newJob(IndexSetupProcess.class).build();
+		
+		Trigger indexSetupTrigger = TriggerBuilder.newTrigger().withIdentity("CronTrigger2").withSchedule(CronScheduleBuilder.cronSchedule("0 0 12 1/1 * ? *")).build();
+		
+//		Trigger indexSetupTrigger = TriggerBuilder.newTrigger().withIdentity("CronTrigger").startNow().build();
+		
+		indexSetupScheduler.start();
+		indexSetupScheduler.scheduleJob(indexSetupJob,indexSetupTrigger);
 		
 		
 	}
