@@ -2,6 +2,8 @@ package core;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,7 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -31,7 +33,7 @@ public class RT_Process implements Job{
 	
 	private static final int MAX_RBL = 9500;
 	private static final int MAGIC_LOOP_NUMBER = 500;
-	private String REQUEST_URL_All = "http://www.wienerlinien.at/ogd_realtime/monitor?%s&sender=Aq5inVKiQsJwRm9c";
+	private String REQUEST_URL_All = "http://www.wienerlinien.at/ogd_realtime/monitor?%s&sender=nFTMbBjYEHbCMKSv";
 	private static Logger logger = Logger.getLogger(RT_Process.class);
 	private static final String REAL_TIME_TEMP_FILE = "C:/Users/admin/Desktop/WL/export/realTimeTempFile.json";
 	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -41,10 +43,24 @@ public class RT_Process implements Job{
 	private static final String ES_INDEX_TYPE = "data";
 	Integer dayOfTheWeek = new Date().getDay();
 	Integer hourOfTheDay = new Date().getHours();
+	private static Writer log = null;
 	//TODO Reorganize the constants
 	
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 			    
+		
+		Date date= new Date();
+		long time = date. getTime();
+		try {
+			log = new BufferedWriter(new FileWriter("C:/Users/admin/Desktop/WL/logs/"+time+".txt"));
+			log.append("*****LOG START*****");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}  //clears file every time
+		
+		
+		
 	    //Define the Index name including date
 	    indexTimestamp = indexDateFormat.format(new Date());
 	    ES_INDEX = "rt_wienerlinien_"+indexTimestamp;
@@ -92,6 +108,12 @@ public class RT_Process implements Job{
 			
 		}  
 		
+		try {
+			log.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}	
 	    
 	private List<String> runAll(int start, int end) {
@@ -130,7 +152,10 @@ public class RT_Process implements Job{
 		List<String> finalUrllist = buildURLAll(start, end);
 		logger.info("Url built");
 		List<String> JSONresponselist = new ArrayList<String>();
-
+		
+		Date date= new Date();
+		long time = date. getTime();
+		
 		for (String finalUrl : finalUrllist) {
 			URL url = new URL(finalUrl);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -142,7 +167,7 @@ public class RT_Process implements Job{
 			logger.debug("Response Code : " + responseCode);
 
 			System.out.println("Sending 'GET' request to URL: " + finalUrl);
-			System.out.println("Response Code : " + responseCode);
+			System.out.println("Response Code : " + responseCode + "     Timestamp: " + time);
 			
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			String inputLine;
@@ -156,21 +181,31 @@ public class RT_Process implements Job{
 		return JSONresponselist;
 	}
 	
-	private List<String> buildURLAll(int start, int end) {
+	private List<String> buildURLAll(int start, int end) throws FileNotFoundException {
 		logger.info("Build URL all");
+		
+		Scanner s = new Scanner(new File("C:/Users/admin/Desktop/WL/RBLList/RBL_List.txt"));
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		while (s.hasNextInt()){
+		    list.add(s.nextInt());
+		}
+		s.close();
+		
 		List<String> URLarray = new ArrayList<String>();
 		logger.info("Requesting rbl numbers " + start + " through " + end);
 
-		for (; start - 1 < end;) {
-			String rbltext = String.format("rbl=%d", start);
-			for (int i = 1; start < end && i < MAGIC_LOOP_NUMBER; i++) {
-				start++;
-				rbltext += "&rbl=" + start;
+		
+		for (int j = 0; j < list.size()-1;) {
+			String rbltext = String.format("rbl=%d", list.get(j));
+			for (int i = 1; j < list.size()-1 && i < MAGIC_LOOP_NUMBER; i++) {
+				j++;
+				rbltext += "&rbl=" + list.get(j);
 			}
 			String finalURL = String.format(REQUEST_URL_All, rbltext);
 			URLarray.add(finalURL);
-			start++;
+			j++;
 		}
+		System.out.println(URLarray);
 		return URLarray;
 	}
 	
