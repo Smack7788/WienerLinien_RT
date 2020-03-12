@@ -12,6 +12,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,7 +37,7 @@ public class RT_Process implements Job{
 	private static final int MAGIC_LOOP_NUMBER = 500;
 	private String REQUEST_URL_All = "http://www.wienerlinien.at/ogd_realtime/monitor?%s&sender=nFTMbBjYEHbCMKSv";
 	private static Logger logger = Logger.getLogger(RT_Process.class);
-	private static final String REAL_TIME_TEMP_FILE = "C:/Users/admin/Desktop/WL/export/realTimeTempFile.json";
+	private static final String REAL_TIME_TEMP_FILE = "../RT_WienerLinien/tmpstore/realTimeTempFile";
 	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 	DateFormat indexDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private static String ES_INDEX = "";
@@ -50,14 +52,14 @@ public class RT_Process implements Job{
 			    
 		
 		Date date= new Date();
-		long time = date. getTime();
-		try {
-			log = new BufferedWriter(new FileWriter("C:/Users/admin/Desktop/WL/logs/"+time+".txt"));
-			log.append("*****LOG START*****");
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}  //clears file every time
+		long time = date.getTime();
+//		try {
+//			//	log = new BufferedWriter(new FileWriter("../RT_WienerLinien/logs/"+time+".txt"));
+//			//	log.append("*****LOG START*****");
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}  //clears file every time
 		
 		
 		
@@ -72,7 +74,7 @@ public class RT_Process implements Job{
 		int counterFailed = 0;
 		Writer output;
 		try {
-			output = new BufferedWriter(new FileWriter(REAL_TIME_TEMP_FILE));//clears file every time
+			output = new BufferedWriter(new FileWriter(REAL_TIME_TEMP_FILE+time+".json"));//clears file every time
 			
 			for (int i = 0; i < jsonMonitorList.size(); i++) {
 				String[] jsonArray = convertDataFromInput(jsonMonitorList.get(i));
@@ -91,7 +93,7 @@ public class RT_Process implements Job{
 			System.out.println(estimatedTime);
 			
 			
-			String command = "curl -H \"Content-Type:application/x-ndjson\" -XPOST \"http://localhost:9200/_bulk?pretty\" --data-binary @C:/Users/admin/Desktop/WL/export/realTimeTempFile.json";
+			String command = "curl -H \"Content-Type:application/x-ndjson\" -XPOST \"http://localhost:9200/_bulk?pretty\" --data-binary @../RT_WienerLinien/tmpstore/realTimeTempFile"+time+".json";
 			ProcessBuilder builder = new ProcessBuilder(
 		            "cmd.exe", "/c", command);
 		        Process p = builder.start();
@@ -103,6 +105,8 @@ public class RT_Process implements Job{
 					System.out.println(test);
 				}
 				r.close();
+				
+				//Files.delete(Paths.get(REAL_TIME_TEMP_FILE+time+".json"));
 		} catch (IOException | java.text.ParseException e) {
 			logger.debug(e.getMessage());
 			
@@ -183,8 +187,7 @@ public class RT_Process implements Job{
 	
 	private List<String> buildURLAll(int start, int end) throws FileNotFoundException {
 		logger.info("Build URL all");
-		
-		Scanner s = new Scanner(new File("C:/Users/admin/Desktop/WL/RBLList/RBL_List.txt"));
+		Scanner s = new Scanner(new File("../RT_WienerLinien/tmpstore/RBL_List.txt"));
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		while (s.hasNextInt()){
 		    list.add(s.nextInt());

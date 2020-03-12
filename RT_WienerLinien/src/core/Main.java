@@ -19,11 +19,11 @@ import org.quartz.impl.StdSchedulerFactory;
 public class Main {
 
 	public static void main(String[] args) throws SchedulerException, IOException {
-		PropertyConfigurator.configureAndWatch("C:/Users/admin/git/WL_Repository/RT_WienerLinien/conf/core.DataConverter.log4j.properties");
+		PropertyConfigurator.configureAndWatch("../RT_WienerLinien/conf/core.DataConverter.log4j.properties");
 		
-		
-		System.setProperty("http.proxyHost", "web-proxy.houston.hpecorp.net");
-		System.setProperty("http.proxyPort", "8080");
+		System.out.println(System.getProperty("user.dir"));
+//		System.setProperty("http.proxyHost", "web-proxy.houston.hpecorp.net");
+//		System.setProperty("http.proxyPort", "8080");
 		
 		Scheduler realTimeScheduler = StdSchedulerFactory.getDefaultScheduler();
 		

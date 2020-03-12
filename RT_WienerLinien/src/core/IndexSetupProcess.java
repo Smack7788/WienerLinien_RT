@@ -29,8 +29,7 @@ public void execute(JobExecutionContext context) throws JobExecutionException {
 		System.out.println(indexTimestamp);
 				
 		String command = "curl -X PUT \"http://localhost:9200/rt_wienerlinien_" + indexTimestamp + "\" -H \"Content-Type:application/json\" -d \"@C:/Users/admin/git/WL_Repository/RT_WienerLinien/conf/dailyIndex.mapping.txt\"";
-		ProcessBuilder builder = new ProcessBuilder(
-	            "cmd.exe", "/c", command);
+		ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", command);
 	        Process p = builder.start();
 	        BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String inputLine;
