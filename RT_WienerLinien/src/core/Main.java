@@ -40,12 +40,12 @@ public class Main {
 		
 		JobDetail indexSetupJob = JobBuilder.newJob(IndexSetupProcess.class).build();
 		
-		Trigger indexSetupTrigger = TriggerBuilder.newTrigger().withIdentity("CronTrigger2").withSchedule(CronScheduleBuilder.cronSchedule("0 0 12 1/1 * ? *")).build();
+//		Trigger indexSetupTrigger = TriggerBuilder.newTrigger().withIdentity("CronTrigger2").withSchedule(CronScheduleBuilder.cronSchedule("0 0 12 1/1 * ? *")).build();
 		
 //		Trigger indexSetupTrigger = TriggerBuilder.newTrigger().withIdentity("CronTrigger").startNow().build();
 		
-		indexSetupScheduler.start();
-		indexSetupScheduler.scheduleJob(indexSetupJob,indexSetupTrigger);
+//		indexSetupScheduler.start();
+//		indexSetupScheduler.scheduleJob(indexSetupJob,indexSetupTrigger);
 		
 		
 	}

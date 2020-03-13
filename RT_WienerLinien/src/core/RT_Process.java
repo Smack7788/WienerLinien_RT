@@ -42,7 +42,7 @@ public class RT_Process implements Job{
 	DateFormat indexDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private static String ES_INDEX = "";
 	private static String indexTimestamp = null;
-	private static final String ES_INDEX_TYPE = "data";
+	private static final String ES_INDEX_TYPE = "_doc";
 	Integer dayOfTheWeek = new Date().getDay();
 	Integer hourOfTheDay = new Date().getHours();
 	private static Writer log = null;
@@ -54,8 +54,8 @@ public class RT_Process implements Job{
 		Date date= new Date();
 		long time = date.getTime();
 //		try {
-//			//	log = new BufferedWriter(new FileWriter("../RT_WienerLinien/logs/"+time+".txt"));
-//			//	log.append("*****LOG START*****");
+//				log = new BufferedWriter(new FileWriter("../RT_WienerLinien/logs/"+time+".txt"));
+//				log.append("*****LOG START*****");
 //		} catch (IOException e1) {
 //			// TODO Auto-generated catch block
 //			e1.printStackTrace();
@@ -93,7 +93,7 @@ public class RT_Process implements Job{
 			System.out.println(estimatedTime);
 			
 			
-			String command = "curl -H \"Content-Type:application/x-ndjson\" -XPOST \"http://localhost:9200/_bulk?pretty\" --data-binary @../RT_WienerLinien/tmpstore/realTimeTempFile"+time+".json";
+			String command = "curl -k -H \"Content-Type:application/x-ndjson\" -u \"elastic:85f599nljxs5qvlfmdkr8475\" -XPOST \"https://localhost:9200/_bulk?pretty\" --data-binary @../RT_WienerLinien/tmpstore/realTimeTempFile"+time+".json";
 			ProcessBuilder builder = new ProcessBuilder(
 		            "cmd.exe", "/c", command);
 		        Process p = builder.start();
@@ -106,22 +106,21 @@ public class RT_Process implements Job{
 				}
 				r.close();
 				
-				//Files.delete(Paths.get(REAL_TIME_TEMP_FILE+time+".json"));
+				Files.delete(Paths.get(REAL_TIME_TEMP_FILE+time+".json"));
 		} catch (IOException | java.text.ParseException e) {
 			logger.debug(e.getMessage());
 			
-		}  
-		
-		try {
-			log.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}	
 	    
 	private List<String> runAll(int start, int end) {
 		logger.info("runALL");
+//		try {
+//			log.append("runALL");
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
 		List<String> JSONmonitorlist = new ArrayList<String>();
 		try {
 			List<String> responseJsonMessagelist = loadRealtimeDataAll(start, end);
@@ -153,6 +152,12 @@ public class RT_Process implements Job{
 	
 	private List<String> loadRealtimeDataAll(int start, int end) throws MalformedURLException, IOException, ProtocolException {
 		logger.info("loadRealtimeDataAll");
+//		try {
+//			log.append("loadRealtimeDataAll");
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
 		List<String> finalUrllist = buildURLAll(start, end);
 		logger.info("Url built");
 		List<String> JSONresponselist = new ArrayList<String>();
@@ -187,6 +192,12 @@ public class RT_Process implements Job{
 	
 	private List<String> buildURLAll(int start, int end) throws FileNotFoundException {
 		logger.info("Build URL all");
+//		try {
+//			log.append("Build URL all");
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
 		Scanner s = new Scanner(new File("../RT_WienerLinien/tmpstore/RBL_List.txt"));
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		while (s.hasNextInt()){
@@ -209,6 +220,7 @@ public class RT_Process implements Job{
 			j++;
 		}
 		System.out.println(URLarray);
+		
 		return URLarray;
 	}
 	

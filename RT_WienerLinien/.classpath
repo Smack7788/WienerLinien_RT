@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/Users/Raphael/git/WienerLinien_RT/RT_WienerLinien/lib/Quartz/c3p0-0.9.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Raphael/git/WienerLinien_RT/RT_WienerLinien/lib/Quartz/log4j-1.2.16.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Raphael/git/WienerLinien_RT/RT_WienerLinien/lib/Quartz/quartz-2.2.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Raphael/git/WienerLinien_RT/RT_WienerLinien/lib/Quartz/quartz-jobs-2.2.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Raphael/git/WienerLinien_RT/RT_WienerLinien/lib/Quartz/slf4j-api-1.7.7.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Raphael/git/WienerLinien_RT/RT_WienerLinien/lib/Quartz/slf4j-log4j12-1.7.7.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Raphael/git/WienerLinien_RT/RT_WienerLinien/lib/Log4J/log4j-1.2.13.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Raphael/git/WienerLinien_RT/RT_WienerLinien/lib/JSON/bson-3.5.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Raphael/git/WienerLinien_RT/RT_WienerLinien/lib/JSON/java-json.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Raphael/git/WienerLinien_RT/RT_WienerLinien/lib/JSON/jquery-1.9.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Raphael/git/WienerLinien_RT/RT_WienerLinien/lib/JSON/json-lib-2.4-jdk15.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Raphael/git/WienerLinien_RT/RT_WienerLinien/lib/JSON/json-simple-1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Raphael/git/WienerLinien_RT/RT_WienerLinien/lib/JSON/json-smart-1.1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="lib/JSON/bson-3.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/JSON/java-json.jar"/>
+	<classpathentry kind="lib" path="lib/JSON/jquery-1.9.1.jar"/>
+	<classpathentry kind="lib" path="lib/JSON/json-lib-2.4-jdk15.jar"/>
+	<classpathentry kind="lib" path="lib/JSON/json-simple-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/JSON/json-smart-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/Log4J/log4j-1.2.13.jar"/>
+	<classpathentry kind="lib" path="lib/Quartz/c3p0-0.9.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/Quartz/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="lib/Quartz/quartz-2.2.3.jar"/>
+	<classpathentry kind="lib" path="lib/Quartz/quartz-jobs-2.2.3.jar"/>
+	<classpathentry kind="lib" path="lib/Quartz/slf4j-api-1.7.7.jar"/>
+	<classpathentry kind="lib" path="lib/Quartz/slf4j-log4j12-1.7.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
