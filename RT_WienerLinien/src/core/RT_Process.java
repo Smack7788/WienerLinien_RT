@@ -93,7 +93,7 @@ public class RT_Process implements Job{
 			System.out.println(estimatedTime);
 			
 			
-			String command = "curl -k -H \"Content-Type:application/x-ndjson\" -u \"elastic:85f599nljxs5qvlfmdkr8475\" -XPOST \"https://localhost:9200/_bulk?pretty\" --data-binary @../RT_WienerLinien/tmpstore/realTimeTempFile"+time+".json";
+			String command = "curl -k -H \"Content-Type:application/x-ndjson\" -u \"elastic:t6gqvhc9w52snpq8st6s4www\" -XPOST \"https://localhost:9200/_bulk?pretty\" --data-binary @../RT_WienerLinien/tmpstore/realTimeTempFile"+time+".json";
 			ProcessBuilder builder = new ProcessBuilder(
 		            "cmd.exe", "/c", command);
 		        Process p = builder.start();
